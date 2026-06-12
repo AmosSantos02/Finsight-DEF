@@ -102,16 +102,6 @@
         </div>
       </div>
 
-      <!-- Pizza — Gastos da semana por categoria -->
-      <div class="chart-card">
-        <div class="chart-title">Gastos da semana</div>
-        <div class="pizza-wrap">
-          <div class="pizza-svg-box">
-            <svg id="pizza_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
-          </div>
-          <div id="pizza_legend" class="pizza-legend"></div>
-        </div>
-      </div>
 
       <!-- Gráficos mensais: Despesas e Receitas por categoria -->
       <div class="charts-row">
@@ -543,65 +533,6 @@
         }
       }
 
-      // ─── Pizza — gastos da semana por categoria ───
-      const isCurrentMonth = _dashOffset === 0;
-      const refDate = isCurrentMonth ? new Date() : new Date(now.getFullYear(), now.getMonth() + 1, 0); // último dia do mês se passado
-      const diasPizza = Array.from({length:7}, (_,i) => {
-        const d = new Date(refDate.getTime() - (6-i)*86400000);
-        return d.toISOString().slice(0,10);
-      });
-      const catSpend = {};
-      txAll.filter(tx => !tx.debitocredito && !isTransferTx(tx) && diasPizza.includes(tx.data_transacao)).forEach(tx => {
-        const catData = parseCat(tx.categoria?.nome_categoria || '{}');
-        const nome = catData.nome || 'Sem categoria';
-        const cor  = catData.cor  || '#7c5cfc';
-        if (!catSpend[nome]) catSpend[nome] = { valor: 0, cor };
-        catSpend[nome].valor += parseFloat(tx.valor) || 0;
-      });
-      const slices = Object.entries(catSpend)
-        .map(([nome, d]) => ({ nome, valor: d.valor, cor: d.cor }))
-        .sort((a,b) => b.valor - a.valor);
-      const totalPizza = slices.reduce((s,c) => s + c.valor, 0);
-      const svgEl    = document.getElementById('pizza_svg');
-      const legendEl = document.getElementById('pizza_legend');
-      if (svgEl) {
-        if (!totalPizza) {
-          svgEl.innerHTML = `<text x="50" y="55" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="sans-serif">Sem gastos</text>`;
-          if (legendEl) legendEl.innerHTML = '';
-        } else {
-          const cx = 50, cy = 50, ro = 42, ri = 24;
-          const p2c = (angleDeg, r) => {
-            const rad = (angleDeg - 90) * Math.PI / 180;
-            return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
-          };
-          let paths;
-          if (slices.length === 1) {
-            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${slices[0].cor}"/>
-                     <circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
-          } else {
-            let start = 0;
-            paths = slices.map(s => {
-              const angle = (s.valor / totalPizza) * 360;
-              const end   = start + angle;
-              const [x1,y1] = p2c(start, ro), [x2,y2] = p2c(end, ro);
-              const [x3,y3] = p2c(end,   ri), [x4,y4] = p2c(start, ri);
-              const large   = angle > 180 ? 1 : 0;
-              const d = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
-              start = end;
-              return `<path d="${d}" fill="${s.cor}"/>`;
-            }).join('');
-          }
-          svgEl.innerHTML = paths;
-          if (legendEl) {
-            legendEl.innerHTML = slices.map(s => `
-              <div class="pizza-item">
-                <span class="pizza-dot" style="background:${s.cor}"></span>
-                <span class="pizza-nome">${s.nome}</span>
-                <span class="pizza-val">R$ ${fmtBRL(s.valor)}</span>
-              </div>`).join('');
-          }
-        }
-      }
 
       // ─── Despesas por categoria (mês selecionado) ───
       const despCat = {};
