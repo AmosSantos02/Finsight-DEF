@@ -757,7 +757,8 @@ html:not(.dark) .appbar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
+  padding-top: 8px;
 }
 .pizza-donut-box {
   position: relative;
@@ -779,18 +780,21 @@ html:not(.dark) .appbar {
   pointer-events: none;
 }
 .pizza-donut-center-label {
-  font-size: .6rem;
+  font-size: .55rem;
   font-weight: 600;
   color: var(--t3);
   text-transform: uppercase;
   letter-spacing: .04em;
 }
 .pizza-donut-center-value {
-  font-size: .85rem;
+  font-size: .72rem;
   font-weight: 800;
   color: var(--t1);
   font-family: var(--mono);
   letter-spacing: -.02em;
+  max-width: 46px;
+  text-align: center;
+  line-height: 1.2;
 }
 .pizza-half-legend {
   width: 100%;
