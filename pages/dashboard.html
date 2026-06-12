@@ -117,20 +117,28 @@
       <div class="charts-row">
         <div class="chart-card chart-card--half">
           <div class="chart-title">Despesas por categoria</div>
-          <div class="pizza-wrap pizza-wrap--sm">
-            <div class="pizza-svg-box pizza-svg-box--sm">
+          <div class="pizza-wrap--half">
+            <div class="pizza-donut-box">
               <svg id="desp_pizza_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div class="pizza-donut-center">
+                <span class="pizza-donut-center-label">Total</span>
+                <span id="desp_pizza_total" class="pizza-donut-center-value">—</span>
+              </div>
             </div>
-            <div id="desp_pizza_legend" class="pizza-legend"></div>
+            <div id="desp_pizza_legend" class="pizza-half-legend"></div>
           </div>
         </div>
         <div class="chart-card chart-card--half">
           <div class="chart-title">Receitas por categoria</div>
-          <div class="pizza-wrap pizza-wrap--sm">
-            <div class="pizza-svg-box pizza-svg-box--sm">
+          <div class="pizza-wrap--half">
+            <div class="pizza-donut-box">
               <svg id="rec_pizza_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div class="pizza-donut-center">
+                <span class="pizza-donut-center-label">Total</span>
+                <span id="rec_pizza_total" class="pizza-donut-center-value">—</span>
+              </div>
             </div>
-            <div id="rec_pizza_legend" class="pizza-legend"></div>
+            <div id="rec_pizza_legend" class="pizza-half-legend"></div>
           </div>
         </div>
       </div>
@@ -610,41 +618,39 @@
       const despTotal = despSlices.reduce((s, c) => s + c.valor, 0);
       const despSvgEl    = document.getElementById('desp_pizza_svg');
       const despLegendEl = document.getElementById('desp_pizza_legend');
+      const despTotalEl  = document.getElementById('desp_pizza_total');
+      if (despTotalEl) despTotalEl.textContent = despTotal ? 'R$' + fmtBRL(despTotal, 0) : '—';
       if (despSvgEl) {
         if (!despTotal) {
-          despSvgEl.innerHTML = `<text x="50" y="55" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="sans-serif">Sem despesas</text>`;
-          if (despLegendEl) despLegendEl.innerHTML = '';
+          despSvgEl.innerHTML = `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--b1)" stroke-width="18"/>`;
+          if (despLegendEl) despLegendEl.innerHTML = '<p style="color:var(--t3);font-size:.75rem;text-align:center;">Sem despesas</p>';
         } else {
           const cx = 50, cy = 50, ro = 42, ri = 24;
-          const p2c = (angleDeg, r) => {
-            const rad = (angleDeg - 90) * Math.PI / 180;
-            return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
-          };
-          let paths;
+          const p2c = (a, r) => { const rad = (a-90)*Math.PI/180; return [cx+r*Math.cos(rad), cy+r*Math.sin(rad)]; };
+          let paths, start = 0;
           if (despSlices.length === 1) {
-            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${despSlices[0].cor}"/>
-                     <circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
+            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${despSlices[0].cor}"/><circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
           } else {
-            let start = 0;
             paths = despSlices.map(s => {
-              const angle = (s.valor / despTotal) * 360;
-              const end   = start + angle;
-              const [x1,y1] = p2c(start, ro), [x2,y2] = p2c(end, ro);
-              const [x3,y3] = p2c(end,   ri), [x4,y4] = p2c(start, ri);
-              const large   = angle > 180 ? 1 : 0;
-              const d = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
+              const angle = (s.valor/despTotal)*360, end = start+angle;
+              const [x1,y1]=p2c(start,ro),[x2,y2]=p2c(end,ro),[x3,y3]=p2c(end,ri),[x4,y4]=p2c(start,ri);
+              const large = angle>180?1:0;
+              const pd = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
               start = end;
-              return `<path d="${d}" fill="${s.cor}"/>`;
+              return `<path d="${pd}" fill="${s.cor}"/>`;
             }).join('');
           }
           despSvgEl.innerHTML = paths;
           if (despLegendEl) {
-            despLegendEl.innerHTML = despSlices.map(s => `
-              <div class="pizza-item">
-                <span class="pizza-dot" style="background:${s.cor}"></span>
-                <span class="pizza-nome">${s.nome}</span>
-                <span class="pizza-val">R$ ${fmtBRL(s.valor, 0)}</span>
-              </div>`).join('');
+            despLegendEl.innerHTML = despSlices.map(s => {
+              const pct = Math.round(s.valor/despTotal*100);
+              return `<div class="pizza-half-item">
+                <span class="pizza-half-dot" style="background:${s.cor}"></span>
+                <span class="pizza-half-nome">${s.nome}</span>
+                <span class="pizza-half-pct">${pct}%</span>
+                <span class="pizza-half-val">R$${fmtBRL(s.valor,0)}</span>
+              </div>`;
+            }).join('');
           }
         }
       }
@@ -664,41 +670,39 @@
       const recTotal = recSlices.reduce((s, c) => s + c.valor, 0);
       const recSvgEl    = document.getElementById('rec_pizza_svg');
       const recLegendEl = document.getElementById('rec_pizza_legend');
+      const recTotalEl  = document.getElementById('rec_pizza_total');
+      if (recTotalEl) recTotalEl.textContent = recTotal ? 'R$' + fmtBRL(recTotal, 0) : '—';
       if (recSvgEl) {
         if (!recTotal) {
-          recSvgEl.innerHTML = `<text x="50" y="55" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="sans-serif">Sem receitas</text>`;
-          if (recLegendEl) recLegendEl.innerHTML = '';
+          recSvgEl.innerHTML = `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--b1)" stroke-width="18"/>`;
+          if (recLegendEl) recLegendEl.innerHTML = '<p style="color:var(--t3);font-size:.75rem;text-align:center;">Sem receitas</p>';
         } else {
           const cx = 50, cy = 50, ro = 42, ri = 24;
-          const p2c = (angleDeg, r) => {
-            const rad = (angleDeg - 90) * Math.PI / 180;
-            return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
-          };
-          let paths;
+          const p2c = (a, r) => { const rad = (a-90)*Math.PI/180; return [cx+r*Math.cos(rad), cy+r*Math.sin(rad)]; };
+          let paths, start = 0;
           if (recSlices.length === 1) {
-            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${recSlices[0].cor}"/>
-                     <circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
+            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${recSlices[0].cor}"/><circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
           } else {
-            let start = 0;
             paths = recSlices.map(s => {
-              const angle = (s.valor / recTotal) * 360;
-              const end   = start + angle;
-              const [x1,y1] = p2c(start, ro), [x2,y2] = p2c(end, ro);
-              const [x3,y3] = p2c(end,   ri), [x4,y4] = p2c(start, ri);
-              const large   = angle > 180 ? 1 : 0;
-              const d = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
+              const angle = (s.valor/recTotal)*360, end = start+angle;
+              const [x1,y1]=p2c(start,ro),[x2,y2]=p2c(end,ro),[x3,y3]=p2c(end,ri),[x4,y4]=p2c(start,ri);
+              const large = angle>180?1:0;
+              const pd = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
               start = end;
-              return `<path d="${d}" fill="${s.cor}"/>`;
+              return `<path d="${pd}" fill="${s.cor}"/>`;
             }).join('');
           }
           recSvgEl.innerHTML = paths;
           if (recLegendEl) {
-            recLegendEl.innerHTML = recSlices.map(s => `
-              <div class="pizza-item">
-                <span class="pizza-dot" style="background:${s.cor}"></span>
-                <span class="pizza-nome">${s.nome}</span>
-                <span class="pizza-val">R$ ${fmtBRL(s.valor, 0)}</span>
-              </div>`).join('');
+            recLegendEl.innerHTML = recSlices.map(s => {
+              const pct = Math.round(s.valor/recTotal*100);
+              return `<div class="pizza-half-item">
+                <span class="pizza-half-dot" style="background:${s.cor}"></span>
+                <span class="pizza-half-nome">${s.nome}</span>
+                <span class="pizza-half-pct">${pct}%</span>
+                <span class="pizza-half-val">R$${fmtBRL(s.valor,0)}</span>
+              </div>`;
+            }).join('');
           }
         }
       }
