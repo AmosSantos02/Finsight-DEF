@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nova Transação | The Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#ffdad6",
+              "primary": "#000666",
+              "on-error": "#ffffff",
+              "background": "#f9f9fb",
+              "on-secondary-fixed": "#002204",
+              "inverse-primary": "#bdc2ff",
+              "tertiary": "#400003",
+              "surface-container-high": "#e8e8ea",
+              "primary-fixed": "#e0e0ff",
+              "on-tertiary-fixed-variant": "#93000e",
+              "on-secondary-fixed-variant": "#005312",
+              "tertiary-fixed": "#ffdad6",
+              "surface-variant": "#e2e2e4",
+              "secondary-fixed-dim": "#88d982",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-error-container": "#93000a",
+              "on-primary-fixed": "#000767",
+              "surface-container-low": "#f3f3f5",
+              "secondary-fixed": "#a3f69c",
+              "on-surface-variant": "#454652",
+              "tertiary-fixed-dim": "#ffb4ac",
+              "outline": "#767683",
+              "on-primary-fixed-variant": "#343d96",
+              "on-secondary-container": "#217128",
+              "surface-tint": "#4c56af",
+              "surface-dim": "#d9dadc",
+              "on-surface": "#1a1c1d",
+              "on-background": "#1a1c1d",
+              "on-tertiary-fixed": "#410003",
+              "surface-bright": "#f9f9fb",
+              "surface-container-highest": "#e2e2e4",
+              "inverse-on-surface": "#f0f0f2",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-container": "#ff635a",
+              "outline-variant": "#c6c5d4",
+              "surface": "#f9f9fb",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "secondary-container": "#a0f399",
+              "surface-container": "#eeeef0",
+              "on-primary-container": "#8690ee",
+              "primary-container": "#1a237e",
+              "inverse-surface": "#2f3132",
+              "tertiary-container": "#670007"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .silk-texture {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-slate-200/50 dark:shadow-none flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined text-indigo-950">arrow_back</span>
+</button>
+<h1 class="font-manrope font-black text-indigo-950 dark:text-white uppercase tracking-widest">The Ledger</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="portrait of a professional man in a minimalist office setting, soft daylight, professional corporate headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGafJm-5QHO8Q2TdQDrxa-rg4-i8f1_Gh8TiAH9JvrRTQ0aEJKmJuJyu4GW-fbognqCMgpzEuqpAv-RVNFXPjdsp2EJOroqc4yAV-wunLGUfA_fqwYpmmCajN2bOWvJjfh9MQlyJgqpMvrp4tgiJqSxD_hHXr_i1Xj34wAuRYGnNOtK0RLogyZSnn8_tZx5vtWvg2anAMeIcw04j1-h6Sg-J-4sMmKsp7NKzJGMwgI18serYavKukGswHWa9tdzITNXgi4embAo84"/>
+</div>
+<span class="material-symbols-outlined text-indigo-950 dark:text-indigo-100">notifications</span>
+</div>
+</nav>
+<main class="pt-24 pb-32 px-6 max-w-4xl mx-auto">
+<header class="mb-10 ml-4">
+<span class="font-label text-sm font-semibold text-primary uppercase tracking-[0.2em] opacity-60">Financeiro</span>
+<h2 class="font-headline text-4xl font-extrabold text-primary-container tracking-tight mt-1">Nova Transação</h2>
+</header>
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Form Container -->
+<div class="lg:col-span-8 space-y-6">
+<form class="space-y-8">
+<!-- Wealth Card Style Container for Main Amount -->
+<div class="relative overflow-hidden bg-primary-container rounded-2xl p-8 shadow-xl">
+<div class="absolute inset-0 silk-texture pointer-events-none"></div>
+<label class="block font-label text-indigo-200 text-xs font-bold uppercase tracking-widest mb-2">Valor da Transação</label>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-headline font-bold text-white opacity-60">R$</span>
+<input autofocus="" class="bg-transparent border-none p-0 text-5xl font-headline font-black text-white placeholder-white/30 focus:ring-0 w-full" placeholder="0,00" step="0.01" type="number"/>
+</div>
+</div>
+<!-- Main Form Fields -->
+<div class="bg-surface-container-lowest rounded-2xl p-8 space-y-6 shadow-[0_8px_24px_rgba(26,28,29,0.04)]">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Descrição -->
+<div class="md:col-span-2 space-y-2">
+<label class="block font-label text-sm font-bold text-on-surface-variant ml-1">Descrição</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-on-surface focus:bg-white focus:ring-2 focus:ring-primary-container/10 transition-all placeholder:opacity-40" placeholder="Ex: Assinatura Software Adobe" type="text"/>
+</div>
+<!-- Categoria -->
+<div class="space-y-2">
+<label class="block font-label text-sm font-bold text-on-surface-variant ml-1">Categoria</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low border-none rounded-xl px-4 py-4 text-on-surface focus:bg-white focus:ring-2 focus:ring-primary-container/10 transition-all">
+<option>Selecione uma categoria</option>
+<option>Alimentação</option>
+<option>Assinaturas &amp; Serviços</option>
+<option>Educação</option>
+<option>Lazer</option>
+<option>Saúde</option>
+<option>Transporte</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+<!-- Conta -->
+<div class="space-y-2">
+<label class="block font-label text-sm font-bold text-on-surface-variant ml-1">Conta Destino/Origem</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low border-none rounded-xl px-4 py-4 text-on-surface focus:bg-white focus:ring-2 focus:ring-primary-container/10 transition-all">
+<option>Conta Corrente Principal</option>
+<option>Reserva de Emergência</option>
+<option>Cartão de Crédito Black</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">account_balance_wallet</span>
+</div>
+</div>
+<!-- Data -->
+<div class="space-y-2">
+<label class="block font-label text-sm font-bold text-on-surface-variant ml-1">Data</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-on-surface focus:bg-white focus:ring-2 focus:ring-primary-container/10 transition-all" type="date"/>
+</div>
+</div>
+<!-- Parcelas -->
+<div class="space-y-2">
+<label class="block font-label text-sm font-bold text-on-surface-variant ml-1">Parcelas</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-on-surface focus:bg-white focus:ring-2 focus:ring-primary-container/10 transition-all" min="1" type="number" value="1"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-outline uppercase tracking-wider">x</span>
+</div>
+</div>
+</div>
+<!-- Toggles -->
+<div class="pt-4 space-y-6">
+<div class="flex items-center justify-between group p-4 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex flex-col">
+<span class="font-label font-bold text-on-surface">Conta fixa?</span>
+<span class="text-xs text-on-surface-variant">Repetir transação todos os meses</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Hidden by default: Seletor de data fixa -->
+<div class="bg-surface-container-low/50 p-6 rounded-2xl space-y-4 border border-outline-variant/10">
+<label class="block font-label text-sm font-bold text-on-surface-variant">Dia de vencimento mensal</label>
+<div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex-shrink-0 w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-primary" type="button">01</button>
+<button class="flex-shrink-0 w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-primary" type="button">05</button>
+<button class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold" type="button">10</button>
+<button class="flex-shrink-0 w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-primary" type="button">15</button>
+<button class="flex-shrink-0 w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-primary" type="button">20</button>
+<button class="flex-shrink-0 w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-primary" type="button">25</button>
+</div>
+</div>
+<div class="flex items-center justify-between group p-4 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer border-t border-outline-variant/10 pt-6">
+<div class="flex flex-col">
+<span class="font-label font-bold text-on-surface">Efetivado?</span>
+<span class="text-xs text-on-surface-variant">Transações não efetivadas não alteram o saldo atual</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4 pt-4">
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-headline font-bold py-5 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all" type="submit">
+                            Salvar Transação
+                        </button>
+<button class="px-8 py-5 bg-surface-container-highest text-primary font-headline font-bold rounded-2xl hover:bg-surface-container-high transition-all" type="button">
+                            Cancelar
+                        </button>
+</div>
+</form>
+</div>
+<!-- Bento Sidebar Guidance -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100/50">
+<span class="material-symbols-outlined text-primary mb-3" style="font-variation-settings: 'FILL' 1;">info</span>
+<h4 class="font-headline font-bold text-primary-container mb-2">Dica do Especialista</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                        Categorizar suas despesas ajuda nossa IA a prever seus gastos futuros e sugere metas de economia automáticas.
+                    </p>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-6 overflow-hidden relative">
+<div class="relative z-10">
+<h4 class="font-headline font-bold text-on-surface mb-4">Impacto no Saldo</h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Saldo Atual</span>
+<span class="font-mono font-bold">R$ 12.450,00</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Nova Transação</span>
+<span class="font-mono font-bold text-error">- R$ 0,00</span>
+</div>
+<div class="pt-3 border-t border-outline-variant/20 flex justify-between items-center">
+<span class="font-bold text-on-surface">Projeção</span>
+<span class="font-mono font-bold text-primary">R$ 12.450,00</span>
+</div>
+</div>
+</div>
+</div>
+<div class="rounded-2xl h-48 overflow-hidden relative group">
+<img alt="Financial Planning" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="abstract financial data visualization on a high-end tablet screen, clean office background, professional and sophisticated lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbcTJcoLySfgxTouiLK2DcMph1fARytuQhtabTRcI-1wv-wLbh8RH9ToxNA6v6OL5y-hyAmajg6WaXlpJZ-KSYHFHxHDgd4LFSoSPQC5cwBE-ztVQ1n-2uy8uv6OSVJ5IrS6bVjwaxvsYHn5Jef1gD3yYZOhPuYfLgeXpmyqMH_6xrX_3iYGjo0HzprnGDO8oRPCkMgmWvGpoqSKwJe9HRQpg5DOGNP8PXtpuzwtfrP2_JTQef-rhgaS8DYSSIJVByYuvcTE33ZUU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="text-white text-xs font-bold uppercase tracking-widest">Controle Total</p>
+<p class="text-white/80 text-xs">Visualize sua saúde financeira em tempo real.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-[0_-8px_24px_rgba(26,28,29,0.06)] z-50 rounded-t-2xl">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-indigo-700 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] font-semibold uppercase tracking-tighter mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-indigo-700 transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-inter text-[10px] font-semibold uppercase tracking-tighter mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/40 text-indigo-950 dark:text-indigo-100 rounded-xl px-4 py-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="font-inter text-[10px] font-semibold uppercase tracking-tighter mt-1">Add</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-indigo-700 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[10px] font-semibold uppercase tracking-tighter mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

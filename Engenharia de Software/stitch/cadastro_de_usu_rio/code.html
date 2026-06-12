@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#ffdad6",
+              "primary": "#000666",
+              "on-error": "#ffffff",
+              "background": "#f9f9fb",
+              "on-secondary-fixed": "#002204",
+              "inverse-primary": "#bdc2ff",
+              "tertiary": "#400003",
+              "surface-container-high": "#e8e8ea",
+              "primary-fixed": "#e0e0ff",
+              "on-tertiary-fixed-variant": "#93000e",
+              "on-secondary-fixed-variant": "#005312",
+              "tertiary-fixed": "#ffdad6",
+              "surface-variant": "#e2e2e2",
+              "secondary-fixed-dim": "#88d982",
+              "primary-fixed-dim": "#bdc2ff",
+              "on-error-container": "#93000a",
+              "on-primary-fixed": "#000767",
+              "surface-container-low": "#f3f3f5",
+              "secondary-fixed": "#a3f69c",
+              "on-surface-variant": "#454652",
+              "tertiary-fixed-dim": "#ffb4ac",
+              "outline": "#767683",
+              "on-primary-fixed-variant": "#343d96",
+              "on-secondary-container": "#217128",
+              "surface-tint": "#4c56af",
+              "surface-dim": "#d9dadc",
+              "on-surface": "#1a1c1d",
+              "on-background": "#1a1c1d",
+              "on-tertiary-fixed": "#410003",
+              "surface-bright": "#f9f9fb",
+              "surface-container-highest": "#e2e2e4",
+              "inverse-on-surface": "#f0f0f2",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-container": "#ff635a",
+              "outline-variant": "#c6c5d4",
+              "surface": "#f9f9fb",
+              "secondary": "#1b6d24",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "secondary-container": "#a0f399",
+              "surface-container": "#eeeef0",
+              "on-primary-container": "#8690ee",
+              "primary-container": "#1a237e",
+              "inverse-surface": "#2f3132",
+              "tertiary-container": "#670007"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.editorial-gradient {
+    background: linear-gradient(45deg, #000666, #1a237e)
+    }
+.silk-texture {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuC4XEc0ON3wFuwT8DCeMf4K5Yw2aqR3Di-Avn_kbwrPSzM6fsUfLVlUIBZi_F9ViLkwy_AwNqugFKWCCVc2GuSWjyfeS55kjXzfc33k1_mFfMGzuFPW0DuGD9NlIMqwzRtFdIqsFsqX4mKtHzmGBiEMWxcdxbQJ6nu29Gkff3jlQKZ3u6GfB5Bqa8hsSRc8JDaaOtelI3dBKdV_tTyjhhI0PsJBt8kprdrHG7zewrjAmpzyCuxHUFqSL_Y1c5M0Td7RSf1nsLuv3KU);
+    opacity: 0.03;
+    pointer-events: none
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+<!-- The Ledger Top Bar (Suppressed on Auth Screens per UI mandate, but included for Brand context if needed as static header) -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex justify-between items-center px-6 py-4 w-full shadow-sm shadow-slate-200/50 dark:shadow-none">
+<div class="font-headline font-black text-indigo-950 dark:text-white uppercase tracking-widest">The Ledger</div>
+<div class="flex items-center gap-4">
+<span class="text-sm font-label font-semibold text-on-surface-variant">PT-BR</span>
+</div>
+</header>
+<main class="min-h-screen flex items-center justify-center pt-20 pb-12 px-4 md:px-0">
+<!-- Main Layout Container: Asymmetric Editorial Feel -->
+<div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-12 gap-0 overflow-hidden rounded-xl shadow-2xl shadow-slate-200/50 bg-surface-container-lowest">
+<!-- Left Side: Editorial Content / Brand Identity -->
+<div class="hidden md:flex md:col-span-5 relative editorial-gradient overflow-hidden p-12 flex-col justify-between">
+<div class="silk-texture absolute inset-0"></div>
+<div class="relative z-10">
+<span class="font-headline text-primary-fixed-dim text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Institutional Vault</span>
+<h1 class="font-headline text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
+                        Sua jornada <br/>financeira <br/><span class="text-secondary-fixed">começa aqui.</span>
+</h1>
+<p class="text-indigo-100/80 max-w-xs leading-relaxed font-light">
+                        Acesse as ferramentas de elite para gestão de patrimônio e controle de fluxo de caixa em um ambiente seguro e sofisticado.
+                    </p>
+</div>
+<div class="relative z-10 space-y-8">
+<div class="flex gap-4 items-start">
+<div class="p-2 bg-white/10 rounded-lg backdrop-blur-md">
+<span class="material-symbols-outlined text-white" data-icon="shield_lock">shield_lock</span>
+</div>
+<div>
+<h3 class="text-white font-bold text-sm">Segurança de Nível Bancário</h3>
+<p class="text-indigo-200/60 text-xs">Criptografia de ponta a ponta em todos os seus dados.</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="p-2 bg-white/10 rounded-lg backdrop-blur-md">
+<span class="material-symbols-outlined text-white" data-icon="visibility_off">visibility_off</span>
+</div>
+<div>
+<h3 class="text-white font-bold text-sm">Privacidade Editorial</h3>
+<p class="text-indigo-200/60 text-xs">Seus dados nunca são compartilhados ou vendidos.</p>
+</div>
+</div>
+</div>
+<div class="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary/20 blur-[100px] rounded-full"></div>
+</div>
+<!-- Right Side: Registration Form -->
+<div class="col-span-1 md:col-span-7 p-8 lg:p-16 flex flex-col justify-center">
+<div class="max-w-md mx-auto w-full">
+<div class="mb-10 text-center md:text-left">
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Criar Conta</h2>
+<p class="text-on-surface-variant font-body">Preencha os dados abaixo para acessar o seu ledger pessoal.</p>
+</div>
+<form class="space-y-6">
+<!-- Nome -->
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Nome Completo</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="person">person</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline-variant" placeholder="Ex: Alexandre de Moraes" type="text"/>
+</div>
+</div>
+<!-- E-mail -->
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">E-mail Corporativo</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="alternate_email">alternate_email</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline-variant" placeholder="seu@email.com" type="email"/>
+</div>
+</div>
+<!-- Password Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Senha</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="lock">lock</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline-variant" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant ml-1">Confirmar</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="lock_reset">lock_reset</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary-container transition-all placeholder:text-outline-variant" placeholder="••••••••" type="password"/>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 py-2">
+<input class="rounded border-outline-variant text-primary focus:ring-primary-container h-4 w-4" id="terms" type="checkbox"/>
+<label class="text-xs text-on-surface-variant" for="terms">Eu concordo com os <a class="text-primary font-bold underline" href="#">Termos de Serviço</a> e <a class="text-primary font-bold underline" href="#">Privacidade</a>.</label>
+</div>
+<button class="w-full editorial-gradient text-white py-4 rounded-xl font-headline font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all" type="submit">
+                            Criar Conta
+                        </button>
+</form>
+<div class="mt-8 text-center">
+<p class="text-on-surface-variant text-sm">
+                            Já tenho uma conta? 
+                            <a class="text-primary font-extrabold ml-1 hover:underline" href="#">Entrar no Sistema</a>
+</p>
+</div>
+<div class="mt-12 pt-8 border-t border-surface-container-high flex justify-center gap-8">
+<img alt="PCI DSS" class="h-8 grayscale opacity-50 contrast-125" data-alt="minimalist bank security certification logo monochrome dark gray" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZlxpSVbUhCxGlX9Wa7bg5SI3gsPxDixycGviYAlpJVXWn37o3zTqOSJY_1QrZmKdMUlHJpR3yBk7ZG09__UZnU4xBuBvfsUTtxZPWEMUUPv3gPXJdDr7wDtE378cke5d9ewsCBwoNBRNtCLKmH0ePY1T-Vhi4IHE2ZjoxuvrGiI7qNF7N7tLlo6Hbs46FPGxdBVcyIY6Za1gsZqDf35v94sxqDVwsI9II98f-MBYC3QKOBA437ucmeksAkC0_7tmE2KdmDWAmbro"/>
+<img alt="ISO 27001" class="h-8 grayscale opacity-50 contrast-125" data-alt="ISO 27001 security standards compliance badge monochrome" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwowB4Wmuq4vlNjXreXih5Yvc-IURsJJaAC4jFVaH7mXNG71cUZDOaZu172YNytbh3OLHCFDYbQIb5ylh2Gwq-LxX2uhxZ6ZDaKmN4vfINM1UjKvxzzKUxxjkEHADpkLdWkN3GeGHrZBWhnMHZv3GmmP1whRcnudr4RTjjJWGSOzLrtpjbgpTctG7JEaldRhvO3Km8DtB2YhpBvW2sZeAidTZ_Ro1dN-9w89yygRc5cEfWZXb6lOy8VsJGy5PyWY6AfNQCzumy2ew"/>
+<img alt="SSL Secure" class="h-8 grayscale opacity-50 contrast-125" data-alt="SSL secure connection encryption seal monochrome" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8JXRFBV_ZKJffH9C0jltwav5rx-BPF_sqjB00p2CDysn6wKFSK7irNfwTCzWQpApbWQsDrq5t9BIgfXUuk57ZCqqZqFvaWZVd7S8l6rifbOp-Kbjzv1wV5UV9gUQ75D25qtaew69isRWeMcqXxW8gjWx-ardaLBuDRZBnbs21kRmGJ9bFSzIBUubQa6EkzLBPK0GwDPXMPXs566iekLAHK-C0acst8HxQ5Hx5mJGuJlxzRmi_YvseKUqtQOcnRwjOyUHt0umJtq8"/>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Footer -->
+<footer class="w-full py-8 text-center text-outline-variant text-[10px] font-label tracking-[0.3em] uppercase">
+        © 2024 The Ledger Global Architecture. All Rights Reserved.
+    </footer>
+</body></html>

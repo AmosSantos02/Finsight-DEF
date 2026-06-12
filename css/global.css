@@ -321,6 +321,35 @@ html:not(.dark) .appbar {
   width: var(--sidebar-w);
   box-shadow: var(--sh-lg);
 }
+#sidebar.sidebar--pinned {
+  width: var(--sidebar-w);
+  box-shadow: var(--sh-lg);
+}
+#sidebar.sidebar--pinned .sidebar_brand_name,
+#sidebar.sidebar--pinned .sidebar_link_label,
+#sidebar.sidebar--pinned .sidebar_footer { opacity: 1; }
+
+/* ─── Botão de fixar/recolher sidebar ─── */
+.sidebar-toggle-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--t3);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .15s, background .15s, color .15s;
+}
+.sidebar-toggle-btn .material-symbols-outlined { font-size: 18px; }
+#sidebar:hover .sidebar-toggle-btn      { opacity: 1; }
+#sidebar.sidebar--pinned .sidebar-toggle-btn { opacity: 1; }
+.sidebar-toggle-btn:hover { background: var(--s2); color: var(--t1); }
 
 .sidebar_top {
   display: flex;

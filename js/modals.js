@@ -55,6 +55,9 @@ function buildSidebarHTML() {
     <div class="sidebar_top">
       <span class="material-symbols-outlined">account_balance_wallet</span>
       <span class="sidebar_brand_name">FinSight</span>
+      <button id="sidebar_toggle_btn" class="sidebar-toggle-btn" title="Fixar menu">
+        <span class="material-symbols-outlined" id="sidebar_toggle_icon">chevron_right</span>
+      </button>
     </div>
     <nav class="sidebar_nav">${linksHTML}</nav>
     <div class="sidebar_footer">v2.0.0</div>
@@ -72,6 +75,20 @@ function setupDesktopSidebar() {
     sidebar.innerHTML = buildSidebarHTML();
     document.body.prepend(sidebar);
     document.body.classList.add('has-sidebar');
+
+    if (localStorage.getItem('finsight-sidebar-pinned') === 'true') {
+      sidebar.classList.add('sidebar--pinned');
+      const icon = document.getElementById('sidebar_toggle_icon');
+      if (icon) icon.textContent = 'chevron_left';
+    }
+
+    document.getElementById('sidebar_toggle_btn')?.addEventListener('click', () => {
+      const pinned = sidebar.classList.toggle('sidebar--pinned');
+      localStorage.setItem('finsight-sidebar-pinned', String(pinned));
+      const icon = document.getElementById('sidebar_toggle_icon');
+      if (icon) icon.textContent = pinned ? 'chevron_left' : 'chevron_right';
+    });
+
   } else if (!isDesktop && existing) {
     existing.remove();
     document.body.classList.remove('has-sidebar');
