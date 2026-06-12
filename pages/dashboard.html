@@ -117,7 +117,12 @@
       <div class="charts-row">
         <div class="chart-card chart-card--half">
           <div class="chart-title">Despesas por categoria</div>
-          <div id="desp_cat_list" class="cat-bar-list"></div>
+          <div class="pizza-wrap pizza-wrap--sm">
+            <div class="pizza-svg-box pizza-svg-box--sm">
+              <svg id="desp_pizza_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+            <div id="desp_pizza_legend" class="pizza-legend"></div>
+          </div>
         </div>
         <div class="chart-card chart-card--half">
           <div class="chart-title">Receitas por categoria</div>
@@ -603,24 +608,44 @@
         .map(([nome, d]) => ({ nome, valor: d.valor, cor: d.cor }))
         .sort((a, b) => b.valor - a.valor);
       const despTotal = despSlices.reduce((s, c) => s + c.valor, 0);
-      const despCatList = document.getElementById('desp_cat_list');
-      if (despCatList) {
+      const despSvgEl    = document.getElementById('desp_pizza_svg');
+      const despLegendEl = document.getElementById('desp_pizza_legend');
+      if (despSvgEl) {
         if (!despTotal) {
-          despCatList.innerHTML = '<p style="color:var(--t3);font-size:.78rem;text-align:center;padding:12px 0;">Sem despesas</p>';
+          despSvgEl.innerHTML = `<text x="50" y="55" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="sans-serif">Sem despesas</text>`;
+          if (despLegendEl) despLegendEl.innerHTML = '';
         } else {
-          despCatList.innerHTML = despSlices.slice(0, 5).map(s => {
-            const pct = Math.round(s.valor / despTotal * 100);
-            return `<div class="cat-bar-item">
-              <div class="cat-bar-header">
+          const cx = 50, cy = 50, ro = 42, ri = 24;
+          const p2c = (angleDeg, r) => {
+            const rad = (angleDeg - 90) * Math.PI / 180;
+            return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+          };
+          let paths;
+          if (despSlices.length === 1) {
+            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${despSlices[0].cor}"/>
+                     <circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
+          } else {
+            let start = 0;
+            paths = despSlices.map(s => {
+              const angle = (s.valor / despTotal) * 360;
+              const end   = start + angle;
+              const [x1,y1] = p2c(start, ro), [x2,y2] = p2c(end, ro);
+              const [x3,y3] = p2c(end,   ri), [x4,y4] = p2c(start, ri);
+              const large   = angle > 180 ? 1 : 0;
+              const d = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
+              start = end;
+              return `<path d="${d}" fill="${s.cor}"/>`;
+            }).join('');
+          }
+          despSvgEl.innerHTML = paths;
+          if (despLegendEl) {
+            despLegendEl.innerHTML = despSlices.map(s => `
+              <div class="pizza-item">
                 <span class="pizza-dot" style="background:${s.cor}"></span>
-                <span class="cat-bar-nome">${s.nome}</span>
-                <span class="cat-bar-val">R$ ${fmtBRL(s.valor, 0)}</span>
-              </div>
-              <div class="cat-bar-track">
-                <div class="cat-bar-fill" style="width:${pct}%;background:${s.cor};"></div>
-              </div>
-            </div>`;
-          }).join('');
+                <span class="pizza-nome">${s.nome}</span>
+                <span class="pizza-val">R$ ${fmtBRL(s.valor, 0)}</span>
+              </div>`).join('');
+          }
         }
       }
 
