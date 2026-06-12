@@ -113,12 +113,20 @@
         </div>
       </div>
 
-      <!-- Balanço mensal — últimos 6 meses -->
-      <div class="chart-card">
-        <div class="chart-title">Balanço dos últimos 6 meses</div>
-        <div class="balanco-wrap">
-          <div id="balanco_tooltip" class="balanco-tooltip" style="display:none"></div>
-          <div id="balanco_bars" class="balanco-bars"></div>
+      <!-- Gráficos mensais: Despesas e Receitas por categoria -->
+      <div class="charts-row">
+        <div class="chart-card chart-card--half">
+          <div class="chart-title">Despesas por categoria</div>
+          <div id="desp_cat_list" class="cat-bar-list"></div>
+        </div>
+        <div class="chart-card chart-card--half">
+          <div class="chart-title">Receitas por categoria</div>
+          <div class="pizza-wrap pizza-wrap--sm">
+            <div class="pizza-svg-box pizza-svg-box--sm">
+              <svg id="rec_pizza_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+            <div id="rec_pizza_legend" class="pizza-legend"></div>
+          </div>
         </div>
       </div>
 
@@ -582,56 +590,92 @@
         }
       }
 
-      // ─── Balanço mensal — últimos 6 meses ───
-      const balNow = new Date();
-      const balMeses = Array.from({length:6}, (_,i) => {
-        const d = new Date(balNow.getFullYear(), balNow.getMonth() - (5-i), 1);
-        return { ano: d.getFullYear(), mes: d.getMonth()+1, label: _MESES_PT[d.getMonth()].slice(0,3) };
+      // ─── Despesas por categoria (mês selecionado) ───
+      const despCat = {};
+      txAll.filter(tx => !tx.debitocredito && !isTransferTx(tx) && (tx.data_transacao||'').startsWith(mesAtual)).forEach(tx => {
+        const catData = parseCat(tx.categoria?.nome_categoria || '{}');
+        const nome = catData.nome || 'Sem categoria';
+        const cor  = catData.cor  || '#7c5cfc';
+        if (!despCat[nome]) despCat[nome] = { valor: 0, cor };
+        despCat[nome].valor += parseFloat(tx.valor) || 0;
       });
-      const balData = balMeses.map(m => {
-        let rec = 0, desp = 0;
-        txAll.forEach(tx => {
-          const partes = (tx.data_transacao || '').split('-');
-          if (parseInt(partes[0]) === m.ano && parseInt(partes[1]) === m.mes && !isTransferTx(tx)) {
-            if (tx.debitocredito) rec  += parseFloat(tx.valor) || 0;
-            else                   desp += parseFloat(tx.valor) || 0;
-          }
-        });
-        return { ...m, rec, desp };
-      });
-      const balMax = Math.max(1, ...balData.flatMap(d => [d.rec, d.desp]));
-      const balContainer = document.getElementById('balanco_bars');
-      if (balContainer) {
-        balContainer.innerHTML = balData.map(d => {
-          const hRec  = d.rec  > 0 ? Math.max(6, Math.round(d.rec  / balMax * 88)) : 2;
-          const hDesp = d.desp > 0 ? Math.max(6, Math.round(d.desp / balMax * 88)) : 2;
-          return `<div class="balanco-col" data-rec="${d.rec}" data-desp="${d.desp}" data-label="${d.label}">
-            <div class="balanco-grp">
-              <div class="balanco-bar ${d.rec  > 0 ? 'income'  : 'empty'}" style="height:${hRec}%"></div>
-              <div class="balanco-bar ${d.desp > 0 ? 'expense' : 'empty'}" style="height:${hDesp}%"></div>
-            </div>
-            <span class="balanco-mes">${d.label}</span>
-          </div>`;
-        }).join('');
+      const despSlices = Object.entries(despCat)
+        .map(([nome, d]) => ({ nome, valor: d.valor, cor: d.cor }))
+        .sort((a, b) => b.valor - a.valor);
+      const despTotal = despSlices.reduce((s, c) => s + c.valor, 0);
+      const despCatList = document.getElementById('desp_cat_list');
+      if (despCatList) {
+        if (!despTotal) {
+          despCatList.innerHTML = '<p style="color:var(--t3);font-size:.78rem;text-align:center;padding:12px 0;">Sem despesas</p>';
+        } else {
+          despCatList.innerHTML = despSlices.slice(0, 5).map(s => {
+            const pct = Math.round(s.valor / despTotal * 100);
+            return `<div class="cat-bar-item">
+              <div class="cat-bar-header">
+                <span class="pizza-dot" style="background:${s.cor}"></span>
+                <span class="cat-bar-nome">${s.nome}</span>
+                <span class="cat-bar-val">R$ ${fmtBRL(s.valor, 0)}</span>
+              </div>
+              <div class="cat-bar-track">
+                <div class="cat-bar-fill" style="width:${pct}%;background:${s.cor};"></div>
+              </div>
+            </div>`;
+          }).join('');
+        }
+      }
 
-        const balTooltip = document.getElementById('balanco_tooltip');
-        balContainer.querySelectorAll('.balanco-col').forEach(col => {
-          col.addEventListener('mouseenter', () => {
-            if (!balTooltip) return;
-            const rec  = parseFloat(col.dataset.rec);
-            const desp = parseFloat(col.dataset.desp);
-            balTooltip.innerHTML = `<div class="btt-label">${col.dataset.label}</div>
-              <div class="btt-row btt-income">↑ R$ ${fmtBRL(rec)}</div>
-              <div class="btt-row btt-expense">↓ R$ ${fmtBRL(desp)}</div>`;
-            balTooltip.style.display = 'block';
-            const cRect = col.getBoundingClientRect();
-            const wRect = balContainer.getBoundingClientRect();
-            balTooltip.style.left = (cRect.left - wRect.left + cRect.width / 2) + 'px';
-          });
-          col.addEventListener('mouseleave', () => {
-            if (balTooltip) balTooltip.style.display = 'none';
-          });
-        });
+      // ─── Receitas por categoria (mês selecionado) ───
+      const recCat = {};
+      txAll.filter(tx => tx.debitocredito && !isTransferTx(tx) && (tx.data_transacao||'').startsWith(mesAtual)).forEach(tx => {
+        const catData = parseCat(tx.categoria?.nome_categoria || '{}');
+        const nome = catData.nome || 'Sem categoria';
+        const cor  = catData.cor  || '#22c55e';
+        if (!recCat[nome]) recCat[nome] = { valor: 0, cor };
+        recCat[nome].valor += parseFloat(tx.valor) || 0;
+      });
+      const recSlices = Object.entries(recCat)
+        .map(([nome, d]) => ({ nome, valor: d.valor, cor: d.cor }))
+        .sort((a, b) => b.valor - a.valor);
+      const recTotal = recSlices.reduce((s, c) => s + c.valor, 0);
+      const recSvgEl    = document.getElementById('rec_pizza_svg');
+      const recLegendEl = document.getElementById('rec_pizza_legend');
+      if (recSvgEl) {
+        if (!recTotal) {
+          recSvgEl.innerHTML = `<text x="50" y="55" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="sans-serif">Sem receitas</text>`;
+          if (recLegendEl) recLegendEl.innerHTML = '';
+        } else {
+          const cx = 50, cy = 50, ro = 42, ri = 24;
+          const p2c = (angleDeg, r) => {
+            const rad = (angleDeg - 90) * Math.PI / 180;
+            return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+          };
+          let paths;
+          if (recSlices.length === 1) {
+            paths = `<circle cx="${cx}" cy="${cy}" r="${ro}" fill="${recSlices[0].cor}"/>
+                     <circle cx="${cx}" cy="${cy}" r="${ri}" fill="var(--s1)"/>`;
+          } else {
+            let start = 0;
+            paths = recSlices.map(s => {
+              const angle = (s.valor / recTotal) * 360;
+              const end   = start + angle;
+              const [x1,y1] = p2c(start, ro), [x2,y2] = p2c(end, ro);
+              const [x3,y3] = p2c(end,   ri), [x4,y4] = p2c(start, ri);
+              const large   = angle > 180 ? 1 : 0;
+              const d = `M${x1.toFixed(2)} ${y1.toFixed(2)} A${ro} ${ro} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${ri} ${ri} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z`;
+              start = end;
+              return `<path d="${d}" fill="${s.cor}"/>`;
+            }).join('');
+          }
+          recSvgEl.innerHTML = paths;
+          if (recLegendEl) {
+            recLegendEl.innerHTML = recSlices.map(s => `
+              <div class="pizza-item">
+                <span class="pizza-dot" style="background:${s.cor}"></span>
+                <span class="pizza-nome">${s.nome}</span>
+                <span class="pizza-val">R$ ${fmtBRL(s.valor, 0)}</span>
+              </div>`).join('');
+          }
+        }
       }
 
       // Metas mini

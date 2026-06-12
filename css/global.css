@@ -740,72 +740,71 @@ html:not(.dark) .appbar {
   white-space: nowrap;
 }
 
-/* ─── Balanço mensal ─── */
-.balanco-wrap {
-  position: relative;
-}
-.balanco-bars {
+/* ─── Charts row (dois gráficos lado a lado) ─── */
+.charts-row {
   display: flex;
-  gap: 4px;
-  align-items: flex-end;
-  height: 92px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
-.balanco-col {
+.chart-card--half {
   flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/* ─── Gráfico de barras por categoria ─── */
+.cat-bar-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  height: 100%;
-  justify-content: flex-end;
-  cursor: default;
+  gap: 8px;
 }
-.balanco-grp {
+.cat-bar-item {
   display: flex;
-  gap: 2px;
-  align-items: flex-end;
-  width: 100%;
-  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+}
+.cat-bar-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.cat-bar-nome {
   flex: 1;
-  min-height: 0;
-}
-.balanco-bar {
-  width: min(14px, 45%);
-  border-radius: 3px 3px 0 0;
-  min-height: 2px;
-}
-.balanco-bar.income  { background: var(--income); }
-.balanco-bar.expense { background: var(--expense); }
-.balanco-bar.empty   { background: var(--b1); opacity: .4; }
-.balanco-mes {
-  font-size: .5rem;
-  font-weight: 700;
-  color: var(--t3);
-  letter-spacing: .04em;
-}
-.balanco-tooltip {
-  position: absolute;
-  top: -8px;
-  transform: translate(-50%, -100%);
-  background: var(--s1);
-  border: 1px solid var(--b1);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: .75rem;
-  pointer-events: none;
-  z-index: 10;
+  font-size: .7rem;
+  color: var(--t2);
   white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.btt-label {
-  font-weight: 700;
+.cat-bar-val {
+  font-size: .7rem;
+  font-weight: 600;
   color: var(--t1);
-  margin-bottom: 4px;
-  font-size: .8rem;
+  white-space: nowrap;
 }
-.btt-row { font-size: .75rem; }
-.btt-income  { color: var(--income); }
-.btt-expense { color: var(--expense); }
+.cat-bar-track {
+  height: 5px;
+  background: var(--b1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.cat-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+/* ─── Pizza menor para lado a lado ─── */
+.pizza-svg-box--sm {
+  width: 72px;
+  height: 72px;
+}
+.pizza-wrap--sm {
+  align-items: flex-start;
+}
+.pizza-wrap--sm .pizza-legend {
+  max-height: 90px;
+  overflow: hidden;
+}
 
 /* ─── Bar chart (relatórios) ─── */
 .chart-bars {
