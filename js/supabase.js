@@ -252,6 +252,11 @@ async function dbAddCategoria(nome_categoria) {
   return data;
 }
 
+async function dbUpdateCategoria(id_categoria, nome_categoria) {
+  const { error } = await _db.from('categoria').update({ nome_categoria }).eq('id_categoria', id_categoria);
+  if (error) throw error;
+}
+
 async function dbDeleteCategoria(id_categoria) {
   const { error } = await _db.from('categoria').delete().eq('id_categoria', id_categoria);
   if (error) throw error;

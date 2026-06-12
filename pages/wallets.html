@@ -70,7 +70,7 @@
     </a>
     <a href="transactions.html" class="nav-item">
       <span class="material-symbols-outlined">swap_horiz</span>
-      <span>Atividade</span>
+      <span>Transações</span>
     </a>
     <a href="wallets.html" class="nav-item active">
       <span class="material-symbols-outlined">account_balance_wallet</span>
@@ -129,14 +129,26 @@
   <div id="modal_edit_wallet" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-header">
-        <h2 class="modal-title">Editar Carteira</h2>
-        <button class="modal-close" data-close="modal_edit_wallet"><span class="material-symbols-outlined">close</span></button>
+
+      <!-- Header colorido com ícone da carteira -->
+      <div id="edit_wallet_banner" class="edit-wallet-banner">
+        <div id="edit_wallet_avatar" class="edit-wallet-avatar">
+          <span id="edit_wallet_icon" class="material-symbols-outlined icon-fill">account_balance</span>
+        </div>
+        <div class="edit-wallet-banner-info">
+          <div id="edit_wallet_banner_nome" class="edit-wallet-banner-nome">—</div>
+          <div class="edit-wallet-banner-saldo-label">Saldo atual</div>
+          <div id="edit_wallet_banner_saldo" class="edit-wallet-banner-saldo">R$ —</div>
+        </div>
+        <button class="modal-close edit-wallet-close" data-close="modal_edit_wallet">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
+
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Nome</label>
-          <input id="edit_wallet_nome" type="text" class="form-input" placeholder="Nome da carteira">
+          <label class="form-label">Nome da carteira</label>
+          <input id="edit_wallet_nome" type="text" class="form-input" placeholder="Ex: Nubank, Poupança...">
         </div>
         <div class="modal-actions">
           <button class="btn-modal-cancel" data-close="modal_edit_wallet">Cancelar</button>
@@ -214,7 +226,7 @@
               </div>
             </div>
             <div class="wallet-card_footer">
-              <button class="wallet-card_link" onclick="abrirEditarWallet(${c.id_conta}, '${c.nome_banco.replace(/'/g,"\\'")}')">
+              <button class="wallet-card_link" onclick="abrirEditarWallet(${c.id_conta}, '${c.nome_banco.replace(/'/g,"\\'")}', ${saldo}, '${color}', '${icon}')">
                 <span class="material-symbols-outlined">edit</span>Editar
               </button>
               <button class="wallet-card_edit" onclick="confirmarExcluirWallet(${c.id_conta}, '${c.nome_banco.replace(/'/g,"\\'")}')">
@@ -262,9 +274,16 @@
 
     // ─── Editar carteira ───
     let _editWalletId = null;
-    function abrirEditarWallet(id_conta, nome) {
+    function abrirEditarWallet(id_conta, nome, saldo, color, icon) {
       _editWalletId = id_conta;
       document.getElementById('edit_wallet_nome').value = nome;
+      document.getElementById('edit_wallet_banner_nome').textContent = nome;
+      document.getElementById('edit_wallet_banner_saldo').textContent = 'R$ ' + fmtBRL(saldo);
+      document.getElementById('edit_wallet_icon').textContent = icon;
+      const banner = document.getElementById('edit_wallet_banner');
+      const avatar = document.getElementById('edit_wallet_avatar');
+      if (banner) banner.style.background = color + '18';
+      if (avatar) { avatar.style.background = color + '28'; avatar.style.color = color; }
       openModal('modal_edit_wallet');
     }
     document.getElementById('btn_salvar_edit_wallet').addEventListener('click', async function () {

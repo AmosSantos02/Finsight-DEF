@@ -26,9 +26,6 @@
       <span class="appbar_user_name">João Silva</span>
     </div>
     <div class="appbar_actions">
-      <button class="appbar_btn" data-modal="modal_new_category">
-        <span class="material-symbols-outlined">add</span>
-      </button>
       <a href="profile.html" class="appbar_avatar-btn">
         <div class="appbar_user_avatar">JS</div>
       </a>
@@ -48,6 +45,10 @@
         <button class="filter-tab" data-tab>Despesa</button>
       </div>
 
+      <button class="btn btn-primary" style="width:100%;margin-bottom:20px;" data-modal="modal_new_category">
+        <span class="material-symbols-outlined">add</span>Nova categoria
+      </button>
+
       <div class="category-grid" id="category_grid"></div>
 
     </div>
@@ -61,7 +62,7 @@
     </a>
     <a href="transactions.html" class="nav-item">
       <span class="material-symbols-outlined">swap_horiz</span>
-      <span>Atividade</span>
+      <span>Transações</span>
     </a>
     <a href="wallets.html" class="nav-item">
       <span class="material-symbols-outlined">account_balance_wallet</span>
@@ -146,6 +147,75 @@
     </div>
   </div>
 
+  <!-- Modal: Editar Categoria -->
+  <div id="modal_edit_category" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Editar Categoria</h2>
+        <button class="modal-close" data-close="modal_edit_category"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="type-toggle" id="edit_type_toggle">
+          <button class="type-btn" data-type="expense">
+            <span class="material-symbols-outlined">north</span>Despesa
+          </button>
+          <button class="type-btn" data-type="income">
+            <span class="material-symbols-outlined">south</span>Receita
+          </button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nome</label>
+          <input id="edit_cat_name" type="text" class="form-input" placeholder="Ex: Alimentação, Saúde...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ícone</label>
+          <div class="icon-grid" id="edit_icon_grid">
+            <div class="icon-opt selected" data-icon="restaurant"><span class="material-symbols-outlined">restaurant</span></div>
+            <div class="icon-opt" data-icon="sports_esports"><span class="material-symbols-outlined">sports_esports</span></div>
+            <div class="icon-opt" data-icon="favorite"><span class="material-symbols-outlined">favorite</span></div>
+            <div class="icon-opt" data-icon="payments"><span class="material-symbols-outlined">payments</span></div>
+            <div class="icon-opt" data-icon="directions_car"><span class="material-symbols-outlined">directions_car</span></div>
+            <div class="icon-opt" data-icon="shopping_bag"><span class="material-symbols-outlined">shopping_bag</span></div>
+            <div class="icon-opt" data-icon="home"><span class="material-symbols-outlined">home</span></div>
+            <div class="icon-opt" data-icon="school"><span class="material-symbols-outlined">school</span></div>
+            <div class="icon-opt" data-icon="flight"><span class="material-symbols-outlined">flight</span></div>
+            <div class="icon-opt" data-icon="local_hospital"><span class="material-symbols-outlined">local_hospital</span></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor</label>
+          <div class="color-grid" id="edit_color_grid">
+            <div class="color-opt selected" data-color="#7c5cfc" style="background:#7c5cfc;"></div>
+            <div class="color-opt" data-color="#22c55e" style="background:#22c55e;"></div>
+            <div class="color-opt" data-color="#fb923c" style="background:#fb923c;"></div>
+            <div class="color-opt" data-color="#60a5fa" style="background:#60a5fa;"></div>
+            <div class="color-opt" data-color="#f87171" style="background:#f87171;"></div>
+            <div class="color-opt" data-color="#34d399" style="background:#34d399;"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pré-visualização</label>
+          <div class="cat-preview">
+            <div id="edit_preview_box" class="cat-preview-icon-box" style="background:rgba(124,92,252,.15);">
+              <span id="edit_preview_icon" class="material-symbols-outlined" style="color:#7c5cfc;">restaurant</span>
+            </div>
+            <div>
+              <div id="edit_preview_name" class="cat-preview-name">Nome da categoria</div>
+              <span id="edit_preview_badge" class="cat-preview-badge">Despesa</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-modal-cancel" data-close="modal_edit_category">Cancelar</button>
+          <button id="btn_salvar_edit_cat" class="btn-modal-primary">
+            <span class="material-symbols-outlined" style="font-size:18px;">check</span>Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/supabase.js"></script>
   <script src="../js/modals.js"></script>
@@ -191,6 +261,9 @@
               <div class="category-card_name">${d.nome}</div>
             </div>
             <div class="category-card_footer">
+              <button class="category-card_edit" onclick="abrirEditarCategoria(${c.id_categoria})">
+                <span class="material-symbols-outlined">edit</span>Editar
+              </button>
               <button class="category-card_edit" onclick="excluirCategoria(${c.id_categoria}, '${d.nome.replace(/'/g,"\\'")}')">
                 <span class="material-symbols-outlined">delete</span>Excluir
               </button>
@@ -282,6 +355,89 @@
       finally {
         this.disabled = false;
       }
+    });
+
+    // ─── Editar categoria ───
+    let _editCatId   = null;
+    let _editIcone   = 'restaurant';
+    let _editCor     = '#7c5cfc';
+    let _editTipo    = 'expense';
+
+    document.querySelectorAll('#edit_icon_grid .icon-opt').forEach(opt => {
+      opt.addEventListener('click', function () {
+        document.querySelectorAll('#edit_icon_grid .icon-opt').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        _editIcone = this.dataset.icon;
+        atualizarEditPreview();
+      });
+    });
+    document.querySelectorAll('#edit_color_grid .color-opt').forEach(opt => {
+      opt.addEventListener('click', function () {
+        document.querySelectorAll('#edit_color_grid .color-opt').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        _editCor = this.dataset.color;
+        atualizarEditPreview();
+      });
+    });
+    document.querySelectorAll('#edit_type_toggle .type-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#edit_type_toggle .type-btn').forEach(b => b.classList.remove('active-expense', 'active-income'));
+        this.classList.add(this.dataset.type === 'expense' ? 'active-expense' : 'active-income');
+        _editTipo = this.dataset.type;
+        atualizarEditPreview();
+      });
+    });
+    document.getElementById('edit_cat_name').addEventListener('input', atualizarEditPreview);
+
+    function atualizarEditPreview() {
+      const nome = document.getElementById('edit_cat_name').value || 'Nome da categoria';
+      document.getElementById('edit_preview_name').textContent     = nome;
+      document.getElementById('edit_preview_icon').textContent     = _editIcone;
+      document.getElementById('edit_preview_icon').style.color     = _editCor;
+      document.getElementById('edit_preview_box').style.background = _editCor + '22';
+      const badge = document.getElementById('edit_preview_badge');
+      badge.textContent       = _editTipo === 'income' ? 'Receita' : 'Despesa';
+      badge.style.background  = _editTipo === 'income' ? 'var(--income-dim)' : 'var(--expense-dim)';
+      badge.style.color       = _editTipo === 'income' ? 'var(--income)'     : 'var(--expense)';
+    }
+
+    function abrirEditarCategoria(id_categoria) {
+      const cat = _todasCats.find(c => c.id_categoria === id_categoria);
+      if (!cat) return;
+      _editCatId = id_categoria;
+      const d = parseCat(cat.nome_categoria);
+      _editIcone = d.icone || 'restaurant';
+      _editCor   = d.cor   || '#7c5cfc';
+      _editTipo  = d.tipo  || 'expense';
+
+      document.getElementById('edit_cat_name').value = d.nome || '';
+
+      document.querySelectorAll('#edit_icon_grid .icon-opt').forEach(o =>
+        o.classList.toggle('selected', o.dataset.icon === _editIcone));
+      document.querySelectorAll('#edit_color_grid .color-opt').forEach(o =>
+        o.classList.toggle('selected', o.dataset.color === _editCor));
+      document.querySelectorAll('#edit_type_toggle .type-btn').forEach(b => {
+        b.classList.remove('active-expense', 'active-income');
+        if (b.dataset.type === _editTipo) b.classList.add(_editTipo === 'expense' ? 'active-expense' : 'active-income');
+      });
+
+      atualizarEditPreview();
+      openModal('modal_edit_category');
+    }
+
+    document.getElementById('btn_salvar_edit_cat').addEventListener('click', async function () {
+      if (!_editCatId) return;
+      const nome = document.getElementById('edit_cat_name').value.trim();
+      if (!nome) { document.getElementById('edit_cat_name').focus(); return; }
+      this.disabled = true;
+      const payload = JSON.stringify({ nome, icone: _editIcone, cor: _editCor, tipo: _editTipo });
+      try {
+        await dbUpdateCategoria(_editCatId, payload);
+        _editCatId = null;
+        closeModal('modal_edit_category');
+        await carregarCategorias();
+      } catch(e) { alert('Erro ao salvar: ' + e.message); }
+      finally { this.disabled = false; }
     });
 
     carregarCategorias();

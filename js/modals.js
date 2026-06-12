@@ -37,7 +37,7 @@ function buildSidebarHTML() {
   const path = window.location.pathname;
   const navItems = [
     { href: 'dashboard.html',    icon: 'grid_view',              label: 'Dashboard'  },
-    { href: 'transactions.html', icon: 'swap_horiz',             label: 'Atividade'  },
+    { href: 'transactions.html', icon: 'swap_horiz',             label: 'Transações' },
     { href: 'wallets.html',      icon: 'account_balance_wallet', label: 'Carteiras'  },
     { href: 'goals.html',        icon: 'ads_click',              label: 'Metas'      },
     { href: 'categories.html',   icon: 'category',               label: 'Categorias' },

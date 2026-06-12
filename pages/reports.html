@@ -53,6 +53,17 @@
         <button class="filter-tab" data-tab>Personalizado</button>
       </div>
 
+      <!-- Month navigator (visível só no modo Mês) -->
+      <div id="rep_month_nav" class="report-month-nav" style="display:none;">
+        <button id="btn_prev_month" class="month-nav-btn">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <span id="rep_month_label" class="month-nav-label">—</span>
+        <button id="btn_next_month" class="month-nav-btn">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+
       <!-- Summary cards -->
       <div class="report-summary">
         <div class="summary-card income">
@@ -89,6 +100,42 @@
         <div id="rep_chart_bars" class="chart-bars"></div>
       </div>
 
+      <!-- Gráficos de pizza por categoria -->
+      <div class="charts-row" style="margin-top:14px;">
+        <div class="chart-card chart-card--half">
+          <div class="chart-title">Despesas por categoria</div>
+          <div class="pizza-wrap--half">
+            <div class="pizza-donut-box">
+              <svg id="rep_desp_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div class="pizza-donut-center">
+                <span class="pizza-donut-center-label">Total</span>
+              </div>
+            </div>
+            <div class="pizza-half-total">
+              <span class="pizza-half-total-label">Total do período</span>
+              <span id="rep_desp_total" class="pizza-half-total-value">—</span>
+            </div>
+            <div id="rep_desp_legend" class="pizza-half-legend"></div>
+          </div>
+        </div>
+        <div class="chart-card chart-card--half">
+          <div class="chart-title">Receitas por categoria</div>
+          <div class="pizza-wrap--half">
+            <div class="pizza-donut-box">
+              <svg id="rep_rec_svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+              <div class="pizza-donut-center">
+                <span class="pizza-donut-center-label">Total</span>
+              </div>
+            </div>
+            <div class="pizza-half-total">
+              <span class="pizza-half-total-label">Total do período</span>
+              <span id="rep_rec_total" class="pizza-half-total-value">—</span>
+            </div>
+            <div id="rep_rec_legend" class="pizza-half-legend"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- By category -->
       <div class="section-header">
         <span class="section-title">Por categoria</span>
@@ -112,7 +159,7 @@
     </a>
     <a href="transactions.html" class="nav-item">
       <span class="material-symbols-outlined">swap_horiz</span>
-      <span>Atividade</span>
+      <span>Transações</span>
     </a>
     <a href="wallets.html" class="nav-item">
       <span class="material-symbols-outlined">account_balance_wallet</span>
@@ -186,7 +233,8 @@
     let _allTx   = [];
     let _allCats = [];
     let _allContas = [];
-    let _periodo = 'mes';  // mes | trimestre | ano | personalizado
+    let _periodo  = 'mes';  // mes | trimestre | ano | personalizado
+    let _mesOffset = 0;   // 0 = mês atual, -1 = mês anterior, etc.
     let _filtros = { tipo: 'todas', id_categoria: 'todas', id_tipo: 'todas', de: null, ate: null };
 
     function fmtBRL(v) { return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -199,7 +247,9 @@
       const mm   = now.getMonth();
 
       if (_periodo === 'mes') {
-        return { de: `${yyyy}-${String(mm+1).padStart(2,'0')}-01`, ate: now.toISOString().slice(0,10) };
+        const ref = new Date(yyyy, mm + _mesOffset, 1);
+        const fim = new Date(ref.getFullYear(), ref.getMonth() + 1, 0);
+        return { de: ref.toISOString().slice(0,10), ate: fim.toISOString().slice(0,10) };
       }
       if (_periodo === 'trimestre') {
         const d3 = new Date(now); d3.setMonth(mm - 2); d3.setDate(1);
@@ -239,13 +289,22 @@
       // Atualiza subtítulo
       const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
       const now = new Date();
+      const mesRef = new Date(now.getFullYear(), now.getMonth() + _mesOffset, 1);
       const subtitulos = {
-        mes: `${meses[now.getMonth()]} ${now.getFullYear()}`,
+        mes: `${meses[mesRef.getMonth()]} ${mesRef.getFullYear()}`,
         trimestre: 'Últimos 3 meses',
         ano: `Ano ${now.getFullYear()}`,
         personalizado: de && ate ? `${de.split('-').reverse().join('/')} → ${ate.split('-').reverse().join('/')}` : 'Personalizado'
       };
       document.querySelector('.page_subtitle').textContent = subtitulos[_periodo];
+
+      // Navegação de mês
+      const monthNav   = document.getElementById('rep_month_nav');
+      const monthLabel = document.getElementById('rep_month_label');
+      const btnNext    = document.getElementById('btn_next_month');
+      if (monthNav)   monthNav.style.display = _periodo === 'mes' ? '' : 'none';
+      if (monthLabel) monthLabel.textContent  = `${meses[mesRef.getMonth()]} ${mesRef.getFullYear()}`;
+      if (btnNext)    btnNext.disabled        = _mesOffset >= 0;
 
       // Totais
       let receitas = 0, despesas = 0;
@@ -257,8 +316,16 @@
 
       document.getElementById('rep_receitas').textContent = 'R$ ' + fmtBRL(receitas);
       document.getElementById('rep_despesas').textContent = 'R$ ' + fmtBRL(despesas);
-      document.getElementById('rep_saldo').textContent    = (saldo >= 0 ? '+' : '') + 'R$ ' + fmtBRL(Math.abs(saldo));
-      document.getElementById('rep_saldo').style.color    = saldo >= 0 ? 'var(--clr-income)' : 'var(--clr-expense)';
+      document.getElementById('rep_saldo').textContent = (saldo >= 0 ? '+' : '-') + 'R$ ' + fmtBRL(Math.abs(saldo));
+      const heroEl = document.getElementById('rep_saldo').closest('.balance-hero');
+      if (heroEl) {
+        heroEl.style.background = saldo >= 0
+          ? 'var(--accent)'
+          : 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)';
+        heroEl.style.boxShadow  = saldo >= 0
+          ? 'var(--sh-accent)'
+          : '0 8px 24px rgba(185,28,28,.35)';
+      }
 
       const badge = document.getElementById('rep_badge');
       if (receitas > 0 || despesas > 0) {
@@ -272,6 +339,9 @@
 
       // Gráfico
       renderGrafico(txs);
+
+      // Gráficos de pizza
+      renderPizzas(txs);
 
       // Por categoria
       renderCategorias(txs);
@@ -287,14 +357,22 @@
       let buckets = [];
 
       if (_periodo === 'mes') {
-        // Dias da semana da semana atual (últimos 7 dias)
-        titleEl.textContent = 'Gastos dos últimos 7 dias';
-        buckets = Array.from({length:7}, (_,i) => {
-          const d = new Date(Date.now() - (6-i)*86400000);
-          const iso = d.toISOString().slice(0,10);
-          const dia = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][d.getDay()];
-          return { label: dia, de: iso, ate: iso };
-        });
+        const ref = new Date(now.getFullYear(), now.getMonth() + _mesOffset, 1);
+        const daysInMonth = new Date(ref.getFullYear(), ref.getMonth() + 1, 0).getDate();
+        const ym = `${ref.getFullYear()}-${String(ref.getMonth()+1).padStart(2,'0')}`;
+        titleEl.textContent = `${meses[ref.getMonth()]} ${ref.getFullYear()} — por semana`;
+        const cuts = [1, 8, 15, 22, daysInMonth + 1];
+        buckets = [];
+        for (let i = 0; i < 4; i++) {
+          const start = cuts[i];
+          const end   = Math.min(cuts[i+1] - 1, daysInMonth);
+          if (start > daysInMonth) break;
+          buckets.push({
+            label: `${start}/${ref.getMonth()+1}`,
+            de:  `${ym}-${String(start).padStart(2,'0')}`,
+            ate: `${ym}-${String(end).padStart(2,'0')}`
+          });
+        }
       } else if (_periodo === 'trimestre') {
         titleEl.textContent = 'Últimos 3 meses';
         buckets = [0,1,2].map(i => {
@@ -347,7 +425,11 @@
         const total = rec + desp;
         const h = total > 0 ? Math.max(6, Math.round(total / maxVal * 90)) : 4;
         const cls = rec >= desp ? 'income' : 'expense';
-        return `<div class="chart-col">
+        const tipLines = [];
+        if (rec  > 0) tipLines.push(`Receitas: +R$ ${fmtBRL(rec)}`);
+        if (desp > 0) tipLines.push(`Despesas: -R$ ${fmtBRL(desp)}`);
+        if (!tipLines.length) tipLines.push('Sem transações');
+        return `<div class="chart-col" data-tip="${tipLines.join('&#10;')}">
           <div class="chart-bar ${cls}" style="height:${h}%"></div>
           <span class="chart-day">${b.label}</span>
         </div>`;
@@ -416,6 +498,71 @@
       el.innerHTML = html;
     }
 
+    // ─── Gráficos de pizza ───
+    function renderPizzas(txs) {
+      const COLORS = ['#a78bfa','#60a5fa','#22c55e','#fb923c','#f87171','#34d399','#f59e0b','#ec4899'];
+
+      function arcPath(cx, cy, r, a1, a2) {
+        const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+        const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+        return `M ${x1} ${y1} A ${r} ${r} 0 ${(a2 - a1) > Math.PI ? 1 : 0} 1 ${x2} ${y2}`;
+      }
+
+      function drawDonut(svgId, legendId, totalId, items) {
+        const svg = document.getElementById(svgId);
+        const legendEl = document.getElementById(legendId);
+        const totalEl  = document.getElementById(totalId);
+        if (!svg) return;
+        const total = items.reduce((s, x) => s + x.v, 0);
+        if (!total) {
+          svg.innerHTML = `<circle cx="50" cy="50" r="36" fill="none" stroke="var(--b1)" stroke-width="14"/>`;
+          legendEl.innerHTML = '<span style="font-size:.7rem;color:var(--t3);">Sem dados</span>';
+          totalEl.textContent = 'R$ 0,00';
+          return;
+        }
+        let angle = -Math.PI / 2;
+        let paths = '', legendHTML = '';
+        const gap = items.length > 1 ? 0.025 : 0;
+        items.forEach((item, i) => {
+          const frac = item.v / total;
+          const end  = angle + frac * 2 * Math.PI;
+          const color = item.color || COLORS[i % COLORS.length];
+          if (frac > 0.9999) {
+            paths += `<circle cx="50" cy="50" r="36" fill="none" stroke="${color}" stroke-width="14"/>`;
+          } else {
+            paths += `<path d="${arcPath(50,50,36,angle+gap,end-gap)}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"/>`;
+          }
+          legendHTML += `<div class="pizza-half-item">
+            <div class="pizza-half-dot" style="background:${color};"></div>
+            <span class="pizza-half-nome">${item.label}</span>
+            <span class="pizza-half-pct">${Math.round(frac*100)}%</span>
+            <span class="pizza-half-val">R$ ${fmtBRL(item.v)}</span>
+          </div>`;
+          angle = end;
+        });
+        svg.innerHTML = paths;
+        legendEl.innerHTML = legendHTML;
+        totalEl.textContent = 'R$ ' + fmtBRL(total);
+      }
+
+      const despMap = {}, recMap = {};
+      txs.forEach(tx => {
+        const d   = parseCat(tx.categoria?.nome_categoria || '');
+        const key = tx.id_categoria || 'sem';
+        const val = parseFloat(tx.valor);
+        if (tx.debitocredito) {
+          if (!recMap[key])  recMap[key]  = { label: d.nome || 'Sem categoria', v: 0, color: d.cor };
+          recMap[key].v += val;
+        } else {
+          if (!despMap[key]) despMap[key] = { label: d.nome || 'Sem categoria', v: 0, color: d.cor };
+          despMap[key].v += val;
+        }
+      });
+
+      drawDonut('rep_desp_svg', 'rep_desp_legend', 'rep_desp_total', Object.values(despMap).sort((a,b) => b.v - a.v));
+      drawDonut('rep_rec_svg',  'rep_rec_legend',  'rep_rec_total',  Object.values(recMap).sort((a,b)  => b.v - a.v));
+    }
+
     // ─── Export CSV ───
     document.getElementById('btn_export_csv').addEventListener('click', () => {
       const txs = txFiltradas();
@@ -468,6 +615,17 @@
       document.getElementById('filter_de').value = '';
       document.getElementById('filter_ate').value = '';
       closeModal('modal_report_filters');
+      renderRelatorio();
+    });
+
+    // ─── Navegação de mês ───
+    document.getElementById('btn_prev_month').addEventListener('click', () => {
+      _mesOffset--;
+      renderRelatorio();
+    });
+    document.getElementById('btn_next_month').addEventListener('click', () => {
+      if (_mesOffset >= 0) return;
+      _mesOffset++;
       renderRelatorio();
     });
 
