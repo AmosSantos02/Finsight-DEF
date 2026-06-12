@@ -556,7 +556,7 @@
       const despSvgEl    = document.getElementById('desp_pizza_svg');
       const despLegendEl = document.getElementById('desp_pizza_legend');
       const despTotalEl  = document.getElementById('desp_pizza_total');
-      if (despTotalEl) despTotalEl.textContent = despTotal ? fmtAbrev(despTotal) : '—';
+      if (despTotalEl) despTotalEl.textContent = despTotal ? 'R$' + fmtBRL(despTotal) : '—';
       if (despSvgEl) {
         if (!despTotal) {
           despSvgEl.innerHTML = `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--b1)" stroke-width="18"/>`;
@@ -608,7 +608,7 @@
       const recSvgEl    = document.getElementById('rec_pizza_svg');
       const recLegendEl = document.getElementById('rec_pizza_legend');
       const recTotalEl  = document.getElementById('rec_pizza_total');
-      if (recTotalEl) recTotalEl.textContent = recTotal ? fmtAbrev(recTotal) : '—';
+      if (recTotalEl) recTotalEl.textContent = recTotal ? 'R$' + fmtBRL(recTotal) : '—';
       if (recSvgEl) {
         if (!recTotal) {
           recSvgEl.innerHTML = `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--b1)" stroke-width="18"/>`;
